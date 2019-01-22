@@ -8,18 +8,24 @@
         Title="GCODE sender" Height="450" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="130"/>
             <ColumnDefinition Width="50*"/>
         </Grid.ColumnDefinitions>
-        <StackPanel>
-            <TextBlock Name="PosX"  Padding="10" Text="X: 0"></TextBlock>
-            <TextBlock Name="PosY" Padding="10" Text="Y: 0"></TextBlock>
+        <StackPanel Grid.Column="0">
+            <TextBlock Name="posX"  Padding="10" Text="X: 0"></TextBlock>
+            <TextBlock Name="posY" Padding="10" Text="Y: 0"></TextBlock>
         </StackPanel>
         <Button Name="yPlus" Content="Y+" HorizontalAlignment="Left" VerticalAlignment="Top" Width="22" Margin="54,269,0,0" PreviewMouseDown="StartMoveYPlus" PreviewMouseUp="StopMoveYPlus"/>
         <Button Name="xPlus" Content="X+" HorizontalAlignment="Left" VerticalAlignment="Top" Width="22" Margin="88,298,0,0" PreviewMouseDown="StartMoveXPlus" PreviewMouseUp="StopMoveXPlus"/>
         <Button Name="xMinus" Content="X-" HorizontalAlignment="Left" VerticalAlignment="Top" Width="22" Margin="20,298,0,0" PreviewMouseDown="StartMoveXMinus" PreviewMouseUp="StopMoveXMinus"/>
         <Button x:Name="yMinus" Content="Y-" HorizontalAlignment="Left" VerticalAlignment="Top" Width="22" Margin="54,330,0,0" PreviewMouseDown="StartMoveYMinus" PreviewMouseUp="StopMoveYMinus"/>
         <Button Content="Show Errors" Click="showErrorsButton_Click" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75"/>
+        <Border Name="border" Grid.Column="1" Margin="10,35,10,10" BorderBrush="Gray" BorderThickness="1">
+            <Canvas Name="visualization" Grid.Column="1" HorizontalAlignment="Left"  VerticalAlignment="Top">
+                <Line Name="horizontalLine" X1="0" Y1="0" X2="0" Y2="0" StrokeThickness="1" Stroke="Black"/>
+                <Line Name="verticalLine" X1="0" Y1="0" X2="0" Y2="0" StrokeThickness="1" Stroke="Black"/>
 
+            </Canvas>
+        </Border>
     </Grid>
 </Window>

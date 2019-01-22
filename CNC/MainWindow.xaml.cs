@@ -33,6 +33,8 @@ namespace CNC
         SqlDataAdapter adapter;
         SqlCommand command;
         SqlDataReader reader;
+        double maxX = 300;
+        double maxY = 300;
 
         public MainWindow()
         {
@@ -125,9 +127,18 @@ namespace CNC
             switch (splitInput[0])
             {
                 case "ERROR":
-                    command = new SqlCommand("INSERT INTO Errors (Error_ID) VALUES (@value);", con);
-                    command.Parameters.AddWithValue("@value", splitInput[1]);
+                    command = new SqlCommand("INSERT INTO Errors (Error_ID, Time) VALUES (@ID, @TIME);", con);
+                    command.Parameters.AddWithValue("@ID", splitInput[1]);
+                    command.Parameters.AddWithValue("@TIME", DateTime.Now);
                     command.ExecuteNonQuery();
+                    break;
+                case "POSITION":
+                    double x = 0, y = 0 ;
+                    double.TryParse(splitInput[1], out x);
+                    double.TryParse(splitInput[2], out y);
+                    UpdateVisualization(x, y);
+                    posX.Text = String.Format("X: {0}", splitInput[1]);
+                    posY.Text = String.Format("Y: {0}", splitInput[2]);
                     break;
             }
 
@@ -141,11 +152,33 @@ namespace CNC
             reader = command.ExecuteReader();
             while (reader.Read())
             {
-                output = output + reader.GetValue(0) + " - " + reader.GetValue(1) + "\n";
+                var id = reader.GetValue(0);
+                DateTime time = reader.GetDateTime(1);
+                output = output + id + " - " + time + "\n";
             }
             reader.Close();
             MessageBox.Show(output);
 
+        }
+
+        private void UpdateVisualization(double x, double y)
+        {
+            verticalLine.X1 = MapValue(0, maxX, 0, border.ActualWidth, x);
+            verticalLine.X2 = MapValue(0, maxX, 0, border.ActualWidth, x);
+            verticalLine.Y1 = 0;
+            verticalLine.Y2 = border.ActualHeight;
+
+            horizontalLine.Y1 = border.ActualHeight - MapValue(0, maxY, 0, border.ActualHeight, y);
+            horizontalLine.Y2 = border.ActualHeight - MapValue(0, maxY, 0, border.ActualHeight, y);
+            horizontalLine.X1 = 0;
+            horizontalLine.X2 = border.ActualWidth;
+
+
+        }
+
+        public double MapValue(double a0, double a1, double b0, double b1, double a)
+        {
+            return b0 + (b1 - b0) * ((a - a0) / (a1 - a0));
         }
     }
 }
