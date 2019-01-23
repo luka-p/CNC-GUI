@@ -43,10 +43,10 @@
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="40"/>
             </Grid.RowDefinitions>
-            <Button Name="yPlus" Grid.Column="1" Grid.Row="0" Content="Y+" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Margin="5" />
-            <Button Name="xMinus" Grid.Column="0" Grid.Row="1" Content="X-" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Margin="5"/>
-            <Button Name="xPlus" Grid.Column="2" Grid.Row="1" Content="X+" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Margin="5"/>
-            <Button Name="yMinus" Grid.Column="1" Grid.Row="2" Content="Y-" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Margin="5"/>
+            <Button Name="yPlus" Grid.Column="1" Grid.Row="0" Content="Y+" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Margin="5" PreviewMouseDown="StartMoveYPlus" PreviewMouseUp="StopMoveYPlus"/>
+            <Button Name="xMinus" Grid.Column="0" Grid.Row="1" Content="X-" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Margin="5" PreviewMouseDown="StartMoveXMinus" PreviewMouseUp="StopMoveXMinus"/>
+            <Button Name="xPlus" Grid.Column="2" Grid.Row="1" Content="X+" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Margin="5" PreviewMouseDown="StartMoveXPlus" PreviewMouseUp="StopMoveXPlus"/>
+            <Button Name="yMinus" Grid.Column="1" Grid.Row="2" Content="Y-" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Margin="5" PreviewMouseDown="StartMoveYMinus" PreviewMouseUp="StopMoveYMinus"/>
             <Button Name="plasma" Grid.ColumnSpan="3" Grid.Row="3" Click="Plasma_Click" Content="Plasma" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Margin="5" Background="Gray"/>
         </Grid>
         <StackPanel Grid.Column="2">
