@@ -35,6 +35,8 @@ namespace CNC
         SqlDataReader reader;
         double maxX = 300;
         double maxY = 300;
+        bool plasmaOn = false;
+        List<GCodeLine> gcode = new List<GCodeLine>();
 
         public MainWindow()
         {
@@ -57,20 +59,46 @@ namespace CNC
             */
             adapter = new SqlDataAdapter();
 
+            codeList.ItemsSource = gcode;
+
+
+
         }
 
         private void btnOpen_Click(object sender, RoutedEventArgs e)
         {
-            /*
+            gcode.Clear();
+            GCodeLine.lines = 0; 
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
-                txtEditor.Text = File.ReadAllText(openFileDialog.FileName);
-            */
+            {
+                using (var fs = File.OpenRead(openFileDialog.FileName))
+                {
+                    using (var sr = new StreamReader(fs))
+                    {
+                        string line;
+                        while ((line = sr.ReadLine()) != null)
+                        {
+                            gcode.Add(new GCodeLine(line, ""));
+                        }
+                        codeList.Items.Refresh();
+                    }
+                }
+            }
         }
 
         private void btnSend_Click(object sender, RoutedEventArgs e)
         {
-            clientPipe.WriteString("Test");
+            clientPipe.WriteString("GCODE");
+
+            foreach (GCodeLine l in gcode)
+            {
+
+                clientPipe.WriteString(l.LineNumber + ":" + l.Line);
+                l.Status = "Sent";
+            }
+            codeList.Items.Refresh();
+            clientPipe.WriteString("END");
         }
 
         private void PipeThread()
@@ -132,6 +160,7 @@ namespace CNC
                     command.Parameters.AddWithValue("@TIME", DateTime.Now);
                     command.ExecuteNonQuery();
                     break;
+
                 case "POSITION":
                     double x = 0, y = 0 ;
                     double.TryParse(splitInput[1], out x);
@@ -139,6 +168,27 @@ namespace CNC
                     UpdateVisualization(x, y);
                     posX.Text = String.Format("X: {0}", splitInput[1]);
                     posY.Text = String.Format("Y: {0}", splitInput[2]);
+                    break;
+
+                case "PLASMA":
+                    if (splitInput[1] == "ON")
+                    {
+                        plasmaOn = true;
+                        plasma.Background = Brushes.Yellow;
+                    }
+                    else
+                    {
+                        plasmaOn = false;
+                        plasma.Background = Brushes.Gray;
+                    }
+                    break;
+
+                case "DONE":
+                    Debug.WriteLine(splitInput[1]);
+
+                    int line = int.Parse(splitInput[1]) - 1;
+                    gcode[line].Status = "Done";
+                    codeList.Items.Refresh();
                     break;
             }
 
@@ -179,6 +229,36 @@ namespace CNC
         public double MapValue(double a0, double a1, double b0, double b1, double a)
         {
             return b0 + (b1 - b0) * ((a - a0) / (a1 - a0));
+        }
+
+        private void Plasma_Click(object sender, RoutedEventArgs e)
+        {
+            if (plasmaOn)
+            {
+                clientPipe.WriteString("M05");
+            }
+            else
+            {
+                clientPipe.WriteString("M03");
+            }
+        }
+
+
+    }
+
+    class GCodeLine
+    {
+        public static int lines = 0;
+        public string Line { get; set; }
+        public string Status { get; set; }
+        public int LineNumber { get; }
+
+        public GCodeLine(string line, string status)
+        {
+            Line = line;
+            Status = status;
+            lines++;
+            this.LineNumber = lines;
         }
     }
 }

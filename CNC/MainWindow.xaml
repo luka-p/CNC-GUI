@@ -8,24 +8,78 @@
         Title="GCODE sender" Height="450" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="130"/>
-            <ColumnDefinition Width="50*"/>
+            <ColumnDefinition Width="120"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="250"/>
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0">
             <TextBlock Name="posX"  Padding="10" Text="X: 0"></TextBlock>
             <TextBlock Name="posY" Padding="10" Text="Y: 0"></TextBlock>
         </StackPanel>
+        <!--
         <Button Name="yPlus" Content="Y+" HorizontalAlignment="Left" VerticalAlignment="Top" Width="22" Margin="54,269,0,0" PreviewMouseDown="StartMoveYPlus" PreviewMouseUp="StopMoveYPlus"/>
         <Button Name="xPlus" Content="X+" HorizontalAlignment="Left" VerticalAlignment="Top" Width="22" Margin="88,298,0,0" PreviewMouseDown="StartMoveXPlus" PreviewMouseUp="StopMoveXPlus"/>
         <Button Name="xMinus" Content="X-" HorizontalAlignment="Left" VerticalAlignment="Top" Width="22" Margin="20,298,0,0" PreviewMouseDown="StartMoveXMinus" PreviewMouseUp="StopMoveXMinus"/>
         <Button x:Name="yMinus" Content="Y-" HorizontalAlignment="Left" VerticalAlignment="Top" Width="22" Margin="54,330,0,0" PreviewMouseDown="StartMoveYMinus" PreviewMouseUp="StopMoveYMinus"/>
+        -->
         <Button Content="Show Errors" Click="showErrorsButton_Click" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75"/>
+        
         <Border Name="border" Grid.Column="1" Margin="10,35,10,10" BorderBrush="Gray" BorderThickness="1">
             <Canvas Name="visualization" Grid.Column="1" HorizontalAlignment="Left"  VerticalAlignment="Top">
                 <Line Name="horizontalLine" X1="0" Y1="0" X2="0" Y2="0" StrokeThickness="1" Stroke="Black"/>
                 <Line Name="verticalLine" X1="0" Y1="0" X2="0" Y2="0" StrokeThickness="1" Stroke="Black"/>
-
             </Canvas>
         </Border>
+
+        <Grid Grid.Column="0" VerticalAlignment="Bottom">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="40"></ColumnDefinition>
+                <ColumnDefinition Width="40"></ColumnDefinition>
+                <ColumnDefinition Width="40"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+            <Button Name="yPlus" Grid.Column="1" Grid.Row="0" Content="Y+" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Margin="5" />
+            <Button Name="xMinus" Grid.Column="0" Grid.Row="1" Content="X-" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Margin="5"/>
+            <Button Name="xPlus" Grid.Column="2" Grid.Row="1" Content="X+" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Margin="5"/>
+            <Button Name="yMinus" Grid.Column="1" Grid.Row="2" Content="Y-" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Margin="5"/>
+            <Button Name="plasma" Grid.ColumnSpan="3" Grid.Row="3" Click="Plasma_Click" Content="Plasma" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Margin="5" Background="Gray"/>
+        </Grid>
+        <StackPanel Grid.Column="2">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Content="Open Gcode" Click="btnOpen_Click" Margin="3"></Button>
+                <Button Grid.Column="1" Content="Run" Click="btnSend_Click" Margin="3"></Button>
+
+            </Grid>
+            <ListView Name="codeList" Margin="2">
+                <ListView.Resources>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Status}"
+                          Value="Done">
+                                <Setter Property="Background"
+                      Value="LightGreen" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.Resources>
+
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header = "#" DisplayMemberBinding="{Binding LineNumber}" Width="25"/>
+                        <GridViewColumn Header = "Code" DisplayMemberBinding = "{Binding Line}" Width = "165"/>
+                        <GridViewColumn Header = "Status" DisplayMemberBinding = "{Binding Status}" Width = "50"/>
+                    </GridView>
+                </ListView.View>                
+            </ListView>
+        </StackPanel>
     </Grid>
 </Window>
